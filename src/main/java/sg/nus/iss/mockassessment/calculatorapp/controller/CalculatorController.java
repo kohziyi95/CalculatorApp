@@ -28,11 +28,11 @@ public class CalculatorController {
         } catch (Exception e) {
             body = Json.createObjectBuilder().add("error", e.getMessage()).build();
         }
-        
 
         int value1 = body.getInt("oper1");
         int value2 = body.getInt("oper2");
         String operation = body.getString("ops");
+        
         int result = 0;
         switch(operation) {
             case "plus":
@@ -45,17 +45,25 @@ public class CalculatorController {
                 result = value1 * value2;
                 break;
             case "divide":
-                result = value1 / value2;
+                try {
+                    result = value1 / value2;
+                } catch (ArithmeticException e) {
+                    System.err.println("Error: Division by 0 not allowed");;
+                }
                 break;
             default:
                 break;
             }
+
             String timestamp = Long.toString(System.currentTimeMillis());
 
             JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-            JsonObject response = objectBuilder.add("result", result).add("timestamp", timestamp).add("userAgent", userAgent).build();
+            JsonObject response = objectBuilder
+                .add("result", result)
+                .add("timestamp", timestamp)
+                .add("userAgent", userAgent)
+                .build();
             
         return ResponseEntity.ok(response.toString());
-
     }
 }
