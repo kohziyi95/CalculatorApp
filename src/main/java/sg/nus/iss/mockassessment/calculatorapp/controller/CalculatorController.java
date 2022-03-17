@@ -3,6 +3,7 @@ package sg.nus.iss.mockassessment.calculatorapp.controller;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -52,7 +53,10 @@ public class CalculatorController {
                 }
                 break;
             default:
-                break;
+                JsonObject results = Json.createObjectBuilder()
+                    .add("error", "invalid operator: %s".formatted(operation))
+                    .build();
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(results.toString());
             }
 
             String timestamp = Long.toString(System.currentTimeMillis());
